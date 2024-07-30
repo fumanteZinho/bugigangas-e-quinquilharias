@@ -1,3 +1,4 @@
+[
 { "codigo": "AC00001", "nome":  "ADESIVO PA-02 ( BASE AGUA ) PARA ILLTEC" },
 { "codigo": "AC00002", "nome":  "ADESIVO PA-04 PARA ILLTEC 400GR" },
 { "codigo": "AC00003", "nome":  "ADESIVO SELAMAX CIMENTICIA- BRASILIT 400G" },
@@ -972,3 +973,4 @@
 { "codigo": "TE00023", "nome":  "TELHA FIBROCIMENTO ONDULADA 5 MM - 2,44X1,10 M" },
 { "codigo": "TE00024", "nome":  "CHAPA ONDULADA BR 8MM 2,44X1,10M CRFS" },
 { "codigo": "TE00025", "nome":  "CHAPA ONDULADA RJ 6MM 2,44X1,10M CRFS" }
+]
