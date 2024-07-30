@@ -1,0 +1,117 @@
+// ==UserScript==
+// @name         Pesquisa de Produtos
+// @namespace    https://instagram.com/fumantezinho
+// @version      1.0
+// @description  Pesquisa de produtos
+// @author       fumanteZinho
+// @match        *://portal.fastdrywall.com.br/*
+// @grant        GM_xmlhttpRequest
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    const dataURL = 'https://raw.githubusercontent.com/fumanteZinho/bugigangas-e-quinquilharias/main/produtos.json';
+    function createAccordion(produtos) {
+        let accordionContainer = document.createElement('div');
+        accordionContainer.style.position = 'fixed';
+        accordionContainer.style.bottom = '0';
+        accordionContainer.style.right = '0';
+        accordionContainer.style.zIndex = '9999';
+        accordionContainer.style.backgroundColor = 'white';
+        accordionContainer.style.border = '1px solid #ddd';
+        accordionContainer.style.width = '600px';
+        accordionContainer.style.height = '0';
+        accordionContainer.style.overflowY = 'hidden';
+        accordionContainer.style.transition = 'height 0.3s ease';
+        let searchBar = document.createElement('input');
+        searchBar.type = 'text';
+        searchBar.placeholder = 'Pesquisar...';
+        searchBar.style.width = '100%';
+        searchBar.style.padding = '10px';
+        searchBar.style.boxSizing = 'border-box';
+        searchBar.style.borderBottom = '1px solid #ddd';
+        let table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        let thead = document.createElement('thead');
+        let headerRow = document.createElement('tr');
+        let th1 = document.createElement('th');
+        th1.innerText = 'Código Produto';
+        let th2 = document.createElement('th');
+        th2.innerText = 'Nome Produto';
+        headerRow.appendChild(th1);
+        headerRow.appendChild(th2);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        let tbody = document.createElement('tbody');
+        produtos.forEach(produto => {
+            let row = document.createElement('tr');
+            let td1 = document.createElement('td');
+            td1.innerText = produto.codigo;
+            let td2 = document.createElement('td');
+            td2.innerText = produto.nome;
+            row.appendChild(td1);
+            row.appendChild(td2);
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+        accordionContainer.appendChild(searchBar);
+        accordionContainer.appendChild(table);
+        let accordionButton = document.createElement('button');
+        accordionButton.innerText = 'Mostrar Produtos';
+        accordionButton.style.position = 'fixed';
+        accordionButton.style.bottom = '0';
+        accordionButton.style.right = '0';
+        accordionButton.style.zIndex = '10000';
+        accordionButton.style.backgroundColor = '#007bff';
+        accordionButton.style.color = 'white';
+        accordionButton.style.border = 'none';
+        accordionButton.style.padding = '10px';
+        accordionButton.style.cursor = 'pointer';
+        document.body.appendChild(accordionButton);
+        document.body.appendChild(accordionContainer);
+        accordionButton.addEventListener('click', function() {
+            if (accordionContainer.style.height === '0px') {
+                accordionContainer.style.height = '400px';
+                accordionContainer.style.overflowY = 'scroll';
+                accordionButton.innerText = 'Minimizar';
+            } else {
+                accordionContainer.style.height = '0px';
+                accordionContainer.style.overflowY = 'hidden';
+                accordionButton.innerText = 'Pesquisar Produtos';
+            }
+        });
+        searchBar.addEventListener('input', function() {
+            let filter = searchBar.value.toUpperCase();
+            let rows = tbody.getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                let td1 = rows[i].getElementsByTagName('td')[0];
+                let td2 = rows[i].getElementsByTagName('td')[1];
+                if (td1 || td2) {
+                    let txtValue1 = td1.textContent || td1.innerText;
+                    let txtValue2 = td2.textContent || td2.innerText;
+                    if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        });
+    }
+    GM_xmlhttpRequest({
+        method: 'GET',
+        url: dataURL,
+        onload: function(response) {
+            try {
+                let produtos = JSON.parse(response.responseText);
+                createAccordion(produtos);
+            } catch (e) {
+                console.error('Erro ao carregar JSON:', e);
+            }
+        },
+        onerror: function(response) {
+            console.error('Erro ao requisitar JSON:', response);
+        }
+    });
+})();
